@@ -54,8 +54,6 @@ void _putchar(char character) {
 
 void USART2_Handler(void) { usart_irq_handler(&USART2, &usart2tx); }
 
-static volatile uint64_t staticvar = 0xdeadbeef;
-
 void hexdump(size_t len, const uint8_t* ptr) {
     static const char* hexchar = "01234567890abcdef";
     for (size_t i = 0; i<len; ++i) {
@@ -77,10 +75,7 @@ void TIM6_DACUNDER_Handler(void) {
     uint64_t sec = now / 1000000;
     now %= 1000000;
 
-    hexdump(16, (uint8_t*)0x20000000); _putchar('\n');
-    hexdump(16, (uint8_t*)0x20000010);_putchar('\n');
-    hexdump(16, (uint8_t*)0x20000020);_putchar('\n');
-    printf("\nuptime %llu.%06llu -- %llx\n", sec, now, staticvar);
+    printf("\nuptime %llu.%06llu\n", sec, now);
  }
 
 extern uint32_t UNIQUE_DEVICE_ID[3]; // Section 47.1, defined in .ld file
