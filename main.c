@@ -1,4 +1,4 @@
-#include "cortex_m4.h"
+#include "arm_cm4.h"
 #include "stm32l4xx.h"
 
 #include "clock.h"
@@ -117,8 +117,8 @@ void main(void) {
 	printf("DEVID:%08lx:%08lx:%08lx\n", UNIQUE_DEVICE_ID[2], UNIQUE_DEVICE_ID[1], UNIQUE_DEVICE_ID[0]);
 	printf("RESET:%02x%s%s%s%s%s%s\n", rf, rf & 0x80 ? " LPWR" : "", rf & 0x40 ? " WWDG" : "", rf & 0x20 ? " IWDG" : "",
 	          rf & 0x10 ? " SFT" : "", rf & 0x08 ? " POR" : "", rf & 0x04 ? " PIN" : "");
-    printf("PPLSRC: %s%s\n", pplsrcstr[rcc_pllcfgr_get_pllsrc(&RCC)], 
-        (RCC.CR & RCC_CR_HSEBYP) && (rcc_pllcfgr_get_pllsrc(&RCC)==3) ? " (CK_IN)" :""
+    printf("PPLSRC: %s%s\n", pplsrcstr[rcc_pllcfgr_get_pllsrc()], 
+        (RCC.CR & RCC_CR_HSEBYP) && (rcc_pllcfgr_get_pllsrc()==3) ? " (CK_IN)" :""
     );
 	usart_wait(&USART2);
 
