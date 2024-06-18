@@ -31,6 +31,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "tprintf.h"
@@ -49,29 +50,29 @@
 #define PRINTF_FTOA_BUFFER_SIZE 32U
 #endif
 
-// // support for the floating point type (%f)
-// // default: activated
-// #ifndef PRINTF_DISABLE_SUPPORT_FLOAT
-// #define PRINTF_SUPPORT_FLOAT
-// #endif
+// support for the floating point type (%f)
+// default: activated
+#ifndef PRINTF_DISABLE_SUPPORT_FLOAT
+#define PRINTF_SUPPORT_FLOAT
+#endif
 
-// // support for exponential floating point notation (%e/%g)
-// // default: activated
-// #ifndef PRINTF_DISABLE_SUPPORT_EXPONENTIAL
-// #define PRINTF_SUPPORT_EXPONENTIAL
-// #endif
+// support for exponential floating point notation (%e/%g)
+// default: activated
+#ifndef PRINTF_DISABLE_SUPPORT_EXPONENTIAL
+#define PRINTF_SUPPORT_EXPONENTIAL
+#endif
 
-// // define the default floating point precision
-// // default: 6 digits
-// #ifndef PRINTF_DEFAULT_FLOAT_PRECISION
-// #define PRINTF_DEFAULT_FLOAT_PRECISION  6U
-// #endif
+// define the default floating point precision
+// default: 6 digits
+#ifndef PRINTF_DEFAULT_FLOAT_PRECISION
+#define PRINTF_DEFAULT_FLOAT_PRECISION  6U
+#endif
 
-// // define the largest float suitable to print with %f
-// // default: 1e9
-// #ifndef PRINTF_MAX_FLOAT
-// #define PRINTF_MAX_FLOAT  1e9
-// #endif
+// define the largest float suitable to print with %f
+// default: 1e9
+#ifndef PRINTF_MAX_FLOAT
+#define PRINTF_MAX_FLOAT  1e9
+#endif
 
 // support for the long long types (%llu or %p)
 // default: activated
@@ -103,8 +104,8 @@
 #define FLAGS_ADAPT_EXP (1U << 11U)
 
 // instead of stdbool
-#define bool int
-#define false 0
+// #define bool int
+// #define false 0
 
 // import float.h for DBL_MAX
 #if defined(PRINTF_SUPPORT_FLOAT)

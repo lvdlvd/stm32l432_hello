@@ -3,9 +3,9 @@
 
 #include "clock.h"
 
-extern void main(void);                            // in main.c
-extern void (*const vector_table[])(void);         // in vector.c
-extern char _sidata, _sdata, _edata, _sbss, _ebss; // provided by linker script
+extern void main(void);								// in main.c
+extern void (*const vector_table[])(void);			// in vector.c
+extern char _sidata, _sdata, _edata, _sbss, _ebss;	// provided by linker script
 
 // how many clock cycles to wait before deciding not to use HSE (CK_IN)
 enum { HSE_RDY_TIMEOUT = 40000 };
@@ -17,45 +17,44 @@ enum { HSE_RDY_TIMEOUT = 40000 };
 // sets up the system clock to run at 80MHz, starts the system
 // timer and calls main().
 void Reset_Handler(void) {
-  // Copy data segment to RAM (see stm32XXXX.ld)
-  char *src = &_sidata;
-  char *dst = &_sdata;
+	// Copy data segment to RAM (see stm32XXXX.ld)
+	char *src = &_sidata;
+	char *dst = &_sdata;
 
-  while (dst < &_edata) {
-    *dst++ = *src++;
-  }
+	while (dst < &_edata) {
+		*dst++ = *src++;
+	}
 
-  // clear BSS segment (see stm32XXXX.ld)
-  for (dst = &_sbss; dst < &_ebss; dst++) {
-    *dst = 0;
-  }
+	// clear BSS segment (see stm32XXXX.ld)
+	for (dst = &_sbss; dst < &_ebss; dst++) {
+		*dst = 0;
+	}
 
-  // Vector Table Relocation in Internal FLASH
-  // PM0214 sec 4.4.4
-  SCB.VTOR = (uintptr_t)&vector_table; // provided in vectors.c
+	// Vector Table Relocation in Internal FLASH
+	// PM0214 sec 4.4.4
+	SCB.VTOR = (uintptr_t)&vector_table;  // provided in vectors.c
 
-  // PM0214 sec 4.4.7
-  SCB.CCR |= SCB_CCR_DIV_0_TRP; // division by zero causes trap
-  // enable usage/bus/mem fault separate handlers (in fault.c)
-  // PM0214 sec 4.4.9
-  SCB.SHCSR |=
-      SCB_SHCSR_USGFAULTENA | SCB_SHCSR_BUSFAULTENA | SCB_SHCSR_MEMFAULTENA;
+	// PM0214 sec 4.4.7
+	SCB.CCR |= SCB_CCR_DIV_0_TRP;  // division by zero causes trap
+	// enable usage/bus/mem fault separate handlers (in fault.c)
+	// PM0214 sec 4.4.9
+	SCB.SHCSR |= SCB_SHCSR_USGFAULTENA | SCB_SHCSR_BUSFAULTENA | SCB_SHCSR_MEMFAULTENA;
 
-  // section 4.6.1 CP10/CP11 (FPU) Full Access
-  fpu_cpacr_cpacr_set_cp(0xf);
+	// section 4.6.1 CP10/CP11 (FPU) Full Access
+	fpu_cpacr_cpacr_set_cp(0xf);
 
-  // Disable all interrupts and clear pending bits
-  RCC.CIER = 0;
-  RCC.CICR = RCC.CIFR;
+	// Disable all interrupts and clear pending bits
+	RCC.CIER = 0;
+	RCC.CICR = RCC.CIFR;
 
-  // See RM0394 Section 6 for details on configuration of the clock tree.
+	// See RM0394 Section 6 for details on configuration of the clock tree.
 
-  // feeding all peripherals to run at 64Mhz
-  rcc_cfgr_set_hpre(0);  // AHB HCLK = SYSCLK  =  64MHz
-  rcc_cfgr_set_ppre1(0); // APB1 PCLK = AHB HCLK
-  rcc_cfgr_set_ppre2(0); // APB2 PCLK = AHB HCLK
+	// feeding all peripherals to run at 64Mhz
+	rcc_cfgr_set_hpre(0);	// AHB HCLK = SYSCLK  =  64MHz
+	rcc_cfgr_set_ppre1(0);	// APB1 PCLK = AHB HCLK
+	rcc_cfgr_set_ppre2(0);	// APB2 PCLK = AHB HCLK
 
-  // set system clock to PLL 64 MHz, fed by MSI at 4MHz, or CK_IN(pa0) 8MHz
+	// set system clock to PLL 64 MHz, fed by MSI at 4MHz, or CK_IN(pa0) 8MHz
 
 #if 0
 	// wait for HSE ready for a few ms, if not, fall back to MSI
@@ -79,53 +78,50 @@ void Reset_Handler(void) {
 	}
 #else
 
-  RCC.CR |= RCC_CR_HSION;
-  // Wait till HSI is ready
-  while ((RCC.CR & RCC_CR_HSIRDY) == 0) {
-    __NOP();
-  }
+	RCC.CR |= RCC_CR_HSION;
+	// Wait till HSI is ready
+	while ((RCC.CR & RCC_CR_HSIRDY) == 0) {
+		__NOP();
+	}
 
-  rcc_pllcfgr_set_pllsrc(2); // select 1:HSI16 source (16MHz)
-  rcc_pllcfgr_set_pllm(
-      3); // 0..15 : vco_in = HSI / (1+m)  4..16MHz        16/4 = 4MHz
+	rcc_pllcfgr_set_pllsrc(2);	// select 1:HSI16 source (16MHz)
+	rcc_pllcfgr_set_pllm(3);	// 0..15 : vco_in = HSI / (1+m)  4..16MHz        16/4 = 4MHz
 
 #endif
 
-  rcc_pllcfgr_set_plln(
-      32); // 8...86 : vco_out = vco_in * n = 64...344MHz    4 * 32 = 128MHz
-  rcc_pllcfgr_set_pllr(0); // 0,1,2,3 -> p=2,4,6,8  : sysclk = vco_out / p <=
-                           // 170MHz  4 * 32 / 2 = 64MHz
-  RCC.PLLCFGR |= RCC_PLLCFGR_PLLREN; // emable R output (system clock)
-  RCC.CR |= RCC_CR_PLLON;            // switch on the PLL
+	rcc_pllcfgr_set_plln(32);			// 8...86 : vco_out = vco_in * n = 64...344MHz    4 * 32 = 128MHz
+	rcc_pllcfgr_set_pllr(0);			// 0,1,2,3 -> p=2,4,6,8  : sysclk = vco_out / p <= 170MHz  4 * 32 / 2 = 64MHz
+	RCC.PLLCFGR |= RCC_PLLCFGR_PLLREN;	// emable R output (system clock)
+	RCC.CR |= RCC_CR_PLLON;				// switch on the PLL
 
-  // prepare the flash, RM0394 section 3.3.3
-  FLASH.ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN;
-  flash_acr_set_latency(3); // 3 wait states (4 cycles) cf 3.3.3 p79 table 9
-  while (flash_acr_get_latency() != 3) {
-    __NOP();
-  }
+	// prepare the flash, RM0394 section 3.3.3
+	FLASH.ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN;
+	flash_acr_set_latency(3);  // 3 wait states (4 cycles) cf 3.3.3 p79 table 9
+	while (flash_acr_get_latency() != 3) {
+		__NOP();
+	}
 
-  // Wait till PLL is ready
-  while ((RCC.CR & RCC_CR_PLLRDY) == 0) {
-    __NOP();
-  }
+	// Wait till PLL is ready
+	while ((RCC.CR & RCC_CR_PLLRDY) == 0) {
+		__NOP();
+	}
 
-  // Select PLL as system clock source and wait until it takes effect
-  rcc_cfgr_set_sw(3);
-  while (rcc_cfgr_get_sws() != 3) {
-    __NOP();
-  }
+	// Select PLL as system clock source and wait until it takes effect
+	rcc_cfgr_set_sw(3);
+	while (rcc_cfgr_get_sws() != 3) {
+		__NOP();
+	}
 
-  // Prepare the Cortex system timer
-  stk_load_set_reload(STK_LOAD_RELOAD); // maximum value
-  stk_val_set_current(STK_LOAD_RELOAD);
-  STK.CTRL |= STK_CTRL_CLKSOURCE | STK_CTRL_TICKINT | STK_CTRL_ENABLE;
+	// Prepare the Cortex system timer
+	stk_load_set_reload(STK_LOAD_RELOAD);  // maximum value
+	stk_val_set_current(STK_LOAD_RELOAD);
+	STK.CTRL |= STK_CTRL_CLKSOURCE | STK_CTRL_TICKINT | STK_CTRL_ENABLE;
 
-  main();
+	main();
 
-  for (;;) {
-    __NOP(); // hang
-  }
+	for (;;) {
+		__NOP();  // hang
+	}
 }
 
 volatile uint64_t clockticks = STK_LOAD_RELOAD + 1;

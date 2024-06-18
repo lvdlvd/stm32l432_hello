@@ -20,6 +20,7 @@ static const struct gpio_config_t {
     enum GPIO_Conf mode;
 } pin_cfgs[] = {
     {USART2_TX_PIN, GPIO_AF7_USART123|GPIO_HIGH},
+    {LED_PIN, GPIO_OUTPUT},
     {0, 0}, // sentinel
 };
 
@@ -71,11 +72,13 @@ void TIM6_DACUNDER_Handler(void) {
         return;
     TIM6.SR &= ~TIM1_SR_UIF;
 
-    now /= C_US; // microseconds
-    uint64_t sec = now / 1000000;
-    now %= 1000000;
+    printf("\nuptime %.6f", (double)now/64E6);
 
-    printf("\nuptime %llu.%06llu\n", sec, now);
+    // now /= C_US; // microseconds
+    // uint64_t sec = now / 1000000;
+    // now %= 1000000;
+    // printf("\nuptime %llu.%06llu\n", sec, now);
+    digitalToggle(LED_PIN);
  }
 
 extern uint32_t UNIQUE_DEVICE_ID[3]; // Section 47.1, defined in .ld file
@@ -141,5 +144,14 @@ void main(void) {
     	__WFI();
 
         IWDG.KR = 0xAAAA;  // pet the watchdog TODO check all subsystems
+
+        uint64_t start = cycleCount();
+        float f = 0;
+        for (int i = 1; i < 10000; ++i) {
+            float g = i;
+            f += 1.0f/(g*g);
+        }
+        printf("f: %f  %lld us\n", (double)f, (cycleCount()-start)/C_US);
+
     }
 }
