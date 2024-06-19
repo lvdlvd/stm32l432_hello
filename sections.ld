@@ -8,16 +8,16 @@ ENTRY(Reset_Handler)
 
 SECTIONS
 {
-
   .isr_vector :
   {
-
     . = ALIGN(4);
+    _stext = .;
+
     PROVIDE (isr_vector_table_base = .);
     KEEP(*(.isr_vector)) /* Startup code */
 
     . = ALIGN(4);
-  } >FLASHROM
+  }  >FLASHROM
 
   .text :
   {
@@ -31,9 +31,12 @@ SECTIONS
     . = ALIGN(4);
     _etext = .;
 
-  } >FLASHROM
+  }  >FLASHROM
 
-  _sidata = .;
+  _sitext = LOADADDR(.isr_vector);
+  _eitext = _sitext + (_etext - _stext);
+  _loadtext = ORIGIN(SRAM1);
+  
 
   .data :
   {
@@ -46,7 +49,10 @@ SECTIONS
     . = ALIGN(4);
     _edata = .;
   
-  } >SRAM1 AT> FLASHROM
+  } >SRAM2 AT> FLASHROM
+
+  _sidata = LOADADDR(.data);
+  _eidata = _sidata + (_edata - _sdata);
 
   .bss :
   {
@@ -60,7 +66,7 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;
 
-  } >SRAM1
+  } >SRAM2
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

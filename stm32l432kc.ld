@@ -1,6 +1,7 @@
 /* stm32l4xxCxx have 256k flash and 48+16k ram. */
 MEMORY
 {
+  CODE     (rx)  : ORIGIN = 0x00000000, LENGTH = 48K  
   FLASHROM (rx)  : ORIGIN = 0x08000000, LENGTH = 256K  
   SRAM1    (rw)  : ORIGIN = 0x20000000, LENGTH = 48K
   SRAM2    (rw)  : ORIGIN = 0x10000000, LENGTH = 16K /* aliased at 0x2000c000 */

@@ -72,7 +72,7 @@ void TIM6_DACUNDER_Handler(void) {
         return;
     TIM6.SR &= ~TIM1_SR_UIF;
 
-    printf("\nuptime %.6f", (double)now/64E6);
+    printf("\nuptime %.6f\n", (double)now/64E6);
 
     // now /= C_US; // microseconds
     // uint64_t sec = now / 1000000;
@@ -147,11 +147,11 @@ void main(void) {
 
         uint64_t start = cycleCount();
         float f = 0;
-        for (int i = 1; i < 10000; ++i) {
+        for (int i = 1; i < 100000; ++i) {
             float g = i;
             f += 1.0f/(g*g);
         }
-        printf("f: %f  %lld us\n", (double)f, (cycleCount()-start)/C_US);
+        printf("f: %f  %lld us\r", (double)f, (cycleCount()-start)/C_US);
 
     }
 }

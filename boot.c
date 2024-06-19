@@ -5,7 +5,8 @@
 
 extern void main(void);								// in main.c
 extern void (*const vector_table[])(void);			// in vector.c
-extern char _sidata, _sdata, _edata, _sbss, _ebss;	// provided by linker script
+extern uint32_t _sitext, _eitext, _loadtext;	// provided by linker script
+extern uint32_t _sidata, _sdata, _edata, _sbss, _ebss;	// provided by linker script
 
 // how many clock cycles to wait before deciding not to use HSE (CK_IN)
 enum { HSE_RDY_TIMEOUT = 40000 };
@@ -14,25 +15,33 @@ enum { HSE_RDY_TIMEOUT = 40000 };
 // It loads the data segment, clears the Blank Stuff Segment,
 // sets up the interrupt vector table to load from flash,
 // initializes fault handling and FPU access,
-// sets up the system clock to run at 80MHz, starts the system
+// sets up the system clock to run at 64/80MHz, starts the system
 // timer and calls main().
 void Reset_Handler(void) {
-	// Copy data segment to RAM (see stm32XXXX.ld)
-	char *src = &_sidata;
-	char *dst = &_sdata;
 
-	while (dst < &_edata) {
-		*dst++ = *src++;
-	}
+  // uint32_t *src = &_sitext;
+  // uint32_t *dst = &_loadtext;
+  // while (src < &_eitext) {
+  //   *dst++ = *src++;
+  // }
+
+	// Copy data segment to RAM (see stm32XXXX.ld)
+  uint32_t *src = &_sidata;
+  uint32_t *dst = &_sdata;
+  while (dst < &_edata) {
+    *dst++ = *src++;
+  }
 
 	// clear BSS segment (see stm32XXXX.ld)
-	for (dst = &_sbss; dst < &_ebss; dst++) {
-		*dst = 0;
+	for (uint32_t *p = &_sbss; p < &_ebss; p++) {
+		*p = 0;
 	}
 
 	// Vector Table Relocation in Internal FLASH
 	// PM0214 sec 4.4.4
 	SCB.VTOR = (uintptr_t)&vector_table;  // provided in vectors.c
+
+//  syscfg_memrmp_set_mem_mode(3);
 
 	// PM0214 sec 4.4.7
 	SCB.CCR |= SCB_CCR_DIV_0_TRP;  // division by zero causes trap
