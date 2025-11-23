@@ -22,6 +22,15 @@ static inline void uart_init(struct USART_Type *usart, int baud) {
   usart->CR1 |= USART_CR1_UE | USART_CR1_TE;
 }
 
+static inline void lpuart_init(struct LPUART_Type *usart, int baud) {
+  usart->CR1 = 0;
+  usart->CR2 = 0;
+  usart->CR3 = 0;
+  usart->BRR = uart_brr(baud)*256;
+  usart->CR1 |= LPUART_CR1_UE | LPUART_CR1_TE;
+}
+
+
 // Create IRQ Handlers for the usarts you use like so:
 // 	void USARTx_IRQ_Handler(void) { uart_irq_andler(&USARTx, txbufx); }
 static inline void uart_irq_handler(struct USART_Type *usart, struct Ringbuffer *rb) {
@@ -35,12 +44,32 @@ static inline void uart_irq_handler(struct USART_Type *usart, struct Ringbuffer 
   return;
 }
 
+static inline void lpuart_irq_handler(struct LPUART_Type *usart, struct Ringbuffer *rb) {
+  if (!ringbuffer_empty(rb)) {
+    if ((usart->ISR & LPUART_ISR_TXE) != 0) {
+      usart->TDR = ringbuffer_get_tail(rb);
+    }
+  } else {
+    usart->CR1 &= ~LPUART_CR1_TXEIE;
+  }
+  return;
+}
+
 // start transmission using IRQ driver.
 static inline void uart_start(struct USART_Type *usart) {
   usart->CR1 |= USART_CR1_TXEIE;
 }
 
+static inline void lpuart_start(struct LPUART_Type *usart) {
+  usart->CR1 |= LPUART_CR1_TXEIE;
+}
+
 static inline void uart_wait(struct USART_Type *usart) {
   while (usart->CR1 & USART_CR1_TXEIE)
+    ;
+}
+
+static inline void lpuart_wait(struct LPUART_Type *usart) {
+  while (usart->CR1 & LPUART_CR1_TXEIE)
     ;
 }

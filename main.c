@@ -13,7 +13,7 @@
 
 /* clang-format off */
 enum {
-	USART2_TX_PIN  = PA2,
+	LPUART1_TX_PIN  = PA2,
     LED_PIN        = PB3,    
 };
 
@@ -21,7 +21,7 @@ static const struct gpio_config_t {
     enum GPIO_Pin  pins;
     enum GPIO_Conf mode;
 } pin_cfgs[] = {
-    {USART2_TX_PIN, GPIO_AF7_USART123|GPIO_HIGH},
+    {LPUART1_TX_PIN, GPIO_AF8_LPUART|GPIO_HIGH},
     {LED_PIN, GPIO_OUTPUT},
     {0, 0}, // sentinel
 };
@@ -33,28 +33,30 @@ struct {
     enum IRQn_Type irq;
     uint8_t        prio;
 } irqprios[] = {
-    {USART2_IRQn,   PRIO(2,0)},
+    {LPUART1_IRQn,   PRIO(2,0)},
     {None_IRQn, 0xff},
 };
 #undef PRIO
 
-// USART2 is the console, for debug messages, it runs IRQ driven.
-static struct Ringbuffer usart2tx;
+// console, for debug messages, it runs IRQ driven.
+static struct Ringbuffer consolebuf;
 
 void _putchar(char character) {
-	if (!ringbuffer_full(&usart2tx)) {
-		ringbuffer_put_head(&usart2tx, character);
+	if (!ringbuffer_full(&consolebuf)) {
+		ringbuffer_put_head(&consolebuf, character);
 	} else {
-		ringbuffer_clear(&usart2tx);
+		ringbuffer_clear(&consolebuf);
 		for (const char* p = "!OVFL!"; *p != 0; ++p) {
-			ringbuffer_put_head(&usart2tx, *p);
+			ringbuffer_put_head(&consolebuf, *p);
 		}
 	}
-	uart_start(&USART2);
+	lpuart_start(&LPUART1);
 	return;
 }
 
-void USART2_Handler(void) { uart_irq_handler(&USART2, &usart2tx); }
+void LPUART1_Handler(void) { lpuart_irq_handler(&LPUART1, &consolebuf); }
+
+static inline void console_wait(void) { lpuart_wait(&LPUART1); }
 
 uint32_t tick = 0;
 
@@ -107,7 +109,8 @@ void main(void) {
 
     // Enable all the devices we are going to need
 	RCC.AHB2ENR  |= RCC_AHB2ENR_GPIOAEN|RCC_AHB2ENR_GPIOBEN;
-	RCC.APB1ENR1 |= RCC_APB1ENR1_USART2EN | RCC_APB1ENR1_TIM6EN;
+	RCC.APB1ENR1 |= RCC_APB1ENR1_TIM6EN;
+    RCC.APB1ENR2 |= RCC_APB1ENR2_LPUART1EN;
 
 	for (const struct gpio_config_t* p = pin_cfgs; p->pins; ++p) {
 		gpioConfig(p->pins, p->mode);
@@ -117,9 +120,9 @@ void main(void) {
 	gpioLock(PBAll);
 
     // prepare USART2 for console and debug messages
-	ringbuffer_clear(&usart2tx);
-	uart_init(&USART2, 115200);
-	NVIC_EnableIRQ(USART2_IRQn);
+	ringbuffer_clear(&consolebuf);
+	lpuart_init(&LPUART1, 115200);
+	NVIC_EnableIRQ(LPUART1_IRQn);
 
     printf("SWREV:%x\n", __REVISION__);
     printf("CPUID:%08lx\n", SCB.CPUID);
@@ -136,7 +139,7 @@ void main(void) {
     }
     printf("MEM: %s vtbl:%08lx\n", memmodestr[syscfg_memrmp_get_mem_mode()], SCB.VTOR);
     printf("ADCCAL: TEMP %u %u VREF %u\n", TS_CAL1, TS_CAL2, VREFINT);
-	uart_wait(&USART2);
+	console_wait();
 
     // set up TIM6 for a 10Hz hearbeat
 	TIM6.DIER |= TIM6_DIER_UIE;
@@ -150,7 +153,7 @@ void main(void) {
     //     float alpha = i * M_PI/180.0;
     //     float sinalpha = sinf(alpha);
     //     printf("sin %d %f = %f\n", i, (double)alpha, (double)sinalpha);
-    //     uart_wait(&USART2);
+    //     console_wait();
     // }
 
 
