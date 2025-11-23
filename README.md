@@ -3,32 +3,32 @@ basic environment for the stm32l432kc nucleo and related boards
 
 ## STM32L431kx UFQFPN32 Pin Assignments:
 
-| Pin  | Function   | DIR | Electrical  | Connected to                    |
-| ---- | ---------- | --- | ----------- | ------------------------------- |
-| PA0  | CK_IN      | in  |             | 8Mhz external clock source      |
-| PA1  |            |     |             |                                 |
-| PA2  | USART2 TX  | out | AF_PP 50MHz | Nucleo 32 ST-Link VCTX          |
-| PA3  |            |     |             |                                 |
-| PA4  |            |     |             |                                 |
-| PA5  |            |     |             |                                 |
-| PA6  |            |     |             |                                 |
-| PA7  |            |     |             |                                 |
-| PA8  |            |     |             |                                 |
-| PA9  |            |     |             |                                 |
-| PA10 |            |     |             |                                 |
-| PA11 |            |     |             |                                 |
-| PA12 |            |     |             |                                 |
-| PA13 | JTMS/SWDIO |     |             | Nucleo-32 ST-Link               |
-| PA14 | JTCK/SWCLK |     |             | Nucleo-32 ST-Link               |
-| PA15 |            |     |             | Nucleo-32 ST-Link VCRX          |
-| PB0  |            |     |             |                                 |
-| PB1  |            |     |             |                                 |
-| PB2  |            |     |             | (not exposed on 32-pin package) |
-| PB3  |            |     |             | Nucleo-32 User LED              |
-| PB4  |            |     |             |                                 |
-| PB5  |            |     |             |                                 |
-| PB6  |            |     |             |                                 |
-| PB7  |            |     |             |                                 |
+| Pin  | Function  | DIR | Config   | Connected to                    |
+| ---- | --------- | --- | -------- | ------------------------------- |
+| PA0  | CK_IN     | in  |          | 8Mhz external clock source      |
+| PA1  |           |     |          |                                 |
+| PA2  | USART2 TX | out | AF7 High | Nucleo 32 ST-Link VCTX          |
+| PA3  |           |     |          |                                 |
+| PA4  |           |     |          |                                 |
+| PA5  |           |     |          |                                 |
+| PA6  |           |     |          |                                 |
+| PA7  |           |     |          |                                 |
+| PA8  |           |     |          |                                 |
+| PA9  |           |     |          |                                 |
+| PA10 |           |     |          |                                 |
+| PA11 |           |     |          | CANRX / USBDM                   |
+| PA12 |           |     |          | CANTX / USBDP                   |
+| PA13 | SWDIO     |     |          | Nucleo-32 ST-Link               |
+| PA14 | SWCLK     |     |          | Nucleo-32 ST-Link               |
+| PA15 | USART2 RX | in  | AF3      | Nucleo-32 ST-Link VCRX          |
+| PB0  |           |     |          |                                 |
+| PB1  |           |     |          |                                 |
+| PB2  |           |     |          | (not exposed on 32-pin package) |
+| PB3  |           |     |          | Nucleo-32 User LED              |
+| PB4  |           |     |          |                                 |
+| PB5  |           |     |          |                                 |
+| PB6  |           |     |          |                                 |
+| PB7  |           |     |          |                                 |
 
 # References
 
