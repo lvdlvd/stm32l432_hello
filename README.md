@@ -33,6 +33,6 @@ basic environment for the stm32l432kc nucleo and related boards
 # References
 
 - [UM1956](https://www.st.com/resource/en/user_manual/um1956-stm32-nucleo32-boards-mb1180-stmicroelectronics.pdf) User manual STM32 Nucleo-32 boards (MB1180)
-- [RM0394](https://www.st.com/resource/en/reference_manual/rm0394-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) Reference manual  STM324Lxx MCUs
-- [PM0214](https://www.st.com/resource/en/programming_manual/pm0214-stm32-cortexm4-mcus-and-mpus-programming-manual-stmicroelectronics.pdf) STM32 Cortex®-M4 MCUs and MPUs programming manual
-- [DS11451](https://www.st.com/resource/en/datasheet/stm32l432kc.pdf) STM32L432Kx Datasheet
+- [RM0394](https://www.st.com/resource/en/reference_manual/rm0394-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) Reference manual STM324Lxx MCUs
+- [PM0214](https://www.st.com/resource/en/programming_manual/pm0214-stm32-cortexm4-mcus-and-mpus-programming-manual-stmicroelectronics.pdf) Programming Manual STM32 Cortex®-M4 MCUs and MPUs
+- [DS11451](https://www.st.com/resource/en/datasheet/stm32l432kc.pdf) Datasheet STM32L432Kx
