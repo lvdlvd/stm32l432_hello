@@ -35,8 +35,11 @@ main.elf: $(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS) -Tstm32l432kc.ld
 	@$(SIZE) $@ | awk 'BEGIN {printf("%6s %6s %6s  %6s %6s %s\n", "text", "data", "bss", "flash", "ram", "file")} $$1*1 == $$1 {printf("%6d %6d %6d  %6d %6d %s\n", $$1, $$2, $$3-$$1, $$1+$$2, $$2+$$3, $$6)}'
 
-disthex:main.elf
-	$(OBJCOPY) -O ihex main.elf main-$(REVISION).hex
+%.hex:%.elf
+	$(OBJCOPY) -O ihex $< $@
+
+%.bin:%.elf
+	$(OBJCOPY) -O binary $< $@
 
 flash: main.elf
 	openocd \
@@ -50,6 +53,9 @@ flash: main.elf
 		-c "program $< verify" \
 		-c reset \
 		-c shutdown	
+
+flash2: main.bin
+	st-flash --connect-under-reset --format binary write $< 0x08000000
 
 clean:
 	rm -f *~ *.o *.hex *.bin *.elf *.map
