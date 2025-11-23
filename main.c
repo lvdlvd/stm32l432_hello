@@ -54,16 +54,7 @@ void _putchar(char character) {
 
 void USART2_Handler(void) { uart_irq_handler(&USART2, &usart2tx); }
 
-void hexdump(size_t len, const uint8_t* ptr) {
-    static const char* hexchar = "01234567890abcdef";
-    for (size_t i = 0; i<len; ++i) {
-        _putchar(' ');
-        _putchar(hexchar[ptr[i]>>4]);
-        _putchar(hexchar[ptr[i]&0xf]);
-    }
-}
-
-static uint64_t last = 0;
+uint32_t tick = 0;
 
 // Timer 6: 1Hz status
 void TIM6_DACUNDER_Handler(void) {
@@ -73,14 +64,13 @@ void TIM6_DACUNDER_Handler(void) {
         return;
     TIM6.SR &= ~TIM1_SR_UIF;
 
-//    printf("\nuptime %.6f\n", (double)now/64E6);
+    if (++tick % 10 != 0)
+        return;
 
-    // now /= C_US; // microseconds
-    // uint64_t sec = now / 1000000;
-    // now %= 1000000;
-    // printf("uptime %llu.%06llu\n", sec, now);
-    printf("uptime %llu\n", now - last);
-    last = now;
+    now /= C_US; // microseconds
+    uint64_t sec = now / 1000000;
+    now %= 1000000;
+    printf("uptime %llu.%06llu\n", sec, now);
     digitalToggle(LED_PIN);
  }
 
@@ -146,10 +136,10 @@ void main(void) {
     printf("ADCCAL: TEMP %u %u VREF %u\n", TS_CAL1, TS_CAL2, VREFINT);
 	uart_wait(&USART2);
 
-    // set up TIM6 for a 1Hz hearbeat
+    // set up TIM6 for a 10Hz hearbeat
 	TIM6.DIER |= TIM6_DIER_UIE;
     TIM6.PSC = (CLOCKSPEED_HZ/10000) - 1;
-    TIM6.ARR = 10000 - 1; // 10KHz/10000 = 1Hz
+    TIM6.ARR = 1000 - 1; // 10KHz/1000 = 10Hz
     TIM6.CR1 |= TIM6_CR1_CEN;
     NVIC_EnableIRQ(TIM6_DACUNDER_IRQn);
 

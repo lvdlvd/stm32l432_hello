@@ -13,7 +13,10 @@ static inline uint32_t uart_brr(uint32_t baud) {
   return (CLOCKSPEED_HZ + baud / 2) / baud;
 }
 
-// The current time as measured in cpu cycles since boot
+// The current time as measured in cpu cycles since boot.
+// This must be called at least once every 
+//    (2^24/CLOCKSPEED_HZ) = 0.262144 seconds
+// to handle the system timer overflow.
 uint64_t cycleCount(void);
 
 // spinlock using the system clock
