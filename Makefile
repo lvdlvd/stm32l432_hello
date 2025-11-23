@@ -23,7 +23,6 @@ OBJS = \
 	boot.o \
 	fault.o \
 	gpio2.o \
-	ringbuffer.o \
 	tprintf.o \
 	main.o \
 
@@ -66,6 +65,5 @@ clock.o: stm32l4xx.h clock.h
 fault.o: arm_cm4.h stm32l4xx.h
 gpio2.o: gpio2.h stm32l4xx.h
 main.o: arm_cm4.h stm32l4xx.h clock.h gpio2.h nvic.h tprintf.h usart.h ringbuffer.h
-ringbuffer.o: ringbuffer.h
 tprintf.o: tprintf.h
 vectors.o: arm_cm4.h stm32l4xx.h
