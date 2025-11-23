@@ -6,15 +6,14 @@ OBJCOPY     := $(PREFIX)objcopy
 
 REVISION := $(shell git log -1 --format="%h" || echo "0000000")
 
-ARCH_FLAGS       = -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
-# preventively disable -flto, which causes problems on the compinator
-# OPT_FLAGS      = -O2 -flto -fuse-linker-plugin -ffunction-sections -fdata-sections -fverbose-asm -ffat-lto-objects -fno-exceptions -fno-unwind-tables
-OPT_FLAGS        = -O2 -fuse-linker-plugin -ffunction-sections -fdata-sections -fverbose-asm -ffat-lto-objects -fno-exceptions -fno-unwind-tables
-WARN_FLAGS   = -Werror -Wfatal-errors -Wall -Wextra -Wunsafe-loop-optimizations -Wdouble-promotion -Wundef  -Wno-pedantic -Wno-enum-conversion -Wno-deprecated
-DEBUG_FLAGS      = -ggdb3 -D__REVISION__='0x$(REVISION)'
-#DEBUG_FLAGS  += -fcallgraph-info=su
-CFLAGS           = -std=gnu17 $(ARCH_FLAGS) $(OPT_FLAGS) $(WARN_FLAGS) $(DEBUG_FLAGS)
-LDFLAGS          = -nostartfiles -lnosys -static $(ARCH_FLAGS) $(OPT_FLAGS) $(WARN_FLAGS) $(DEBUG_FLAGS) -Wl,-gc-sections,-Map,main.map -Wl,--cref
+ARCH_FLAGS	= -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+# no -flto, which causes problems on the compinator
+OPT_FLAGS	= -O2 -fuse-linker-plugin -ffunction-sections -fdata-sections -fverbose-asm -ffat-lto-objects -fno-exceptions -fno-unwind-tables
+WARN_FLAGS	= -Werror -Wfatal-errors -Wall -Wextra -Wunsafe-loop-optimizations -Wdouble-promotion -Wundef  -Wno-pedantic -Wno-enum-conversion -Wno-deprecated
+DEBUG_FLAGS	= -ggdb3 -D__REVISION__='0x$(REVISION)'
+#DEBUG_FLAGS	+= -fcallgraph-info=su
+CFLAGS		= -std=gnu17 $(ARCH_FLAGS) $(OPT_FLAGS) $(WARN_FLAGS) $(DEBUG_FLAGS)
+LDFLAGS		= -nostartfiles -lnosys -static $(ARCH_FLAGS) $(OPT_FLAGS) $(WARN_FLAGS) $(DEBUG_FLAGS) -Wl,-gc-sections,-Map,main.map -Wl,--cref
 
 .DEFAULT_GOAL := main.elf
 
@@ -37,7 +36,7 @@ main.elf: $(OBJS)
 	@$(SIZE) $@ | awk 'BEGIN {printf("%6s %6s %6s  %6s %6s %s\n", "text", "data", "bss", "flash", "ram", "file")} $$1*1 == $$1 {printf("%6d %6d %6d  %6d %6d %s\n", $$1, $$2, $$3-$$1, $$1+$$2, $$2+$$3, $$6)}'
 
 disthex:main.elf
-	$(OBJCOPY) -O ihex main.elf hello-$(REVISION).hex
+	$(OBJCOPY) -O ihex main.elf main-$(REVISION).hex
 
 flash: main.elf
 	openocd \
