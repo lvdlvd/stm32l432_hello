@@ -61,7 +61,6 @@ depend:
 # DO NOT DELETE
 
 boot.o: arm_cm4.h stm32l4xx.h clock.h
-clock.o: stm32l4xx.h clock.h
 fault.o: arm_cm4.h stm32l4xx.h
 gpio2.o: gpio2.h stm32l4xx.h
 main.o: arm_cm4.h stm32l4xx.h clock.h gpio2.h nvic.h tprintf.h usart.h ringbuffer.h
