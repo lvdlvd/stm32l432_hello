@@ -1,34 +1,38 @@
 # stm32l432_hello
-basic environment for the stm32l432kc nucleo and related boards
+Basic environment for the stm32l432kc nucleo and related boards
 
 ## STM32L431kx UFQFPN32 Pin Assignments:
 
-| Pin  | Function  | DIR | Config   | Connected to                    |
-| ---- | --------- | --- | -------- | ------------------------------- |
-| PA0  | CK_IN     | in  |          | 8Mhz external clock source      |
-| PA1  |           |     |          |                                 |
-| PA2  | USART2 TX | out | AF7 High | Nucleo 32 ST-Link VCTX          |
-| PA3  |           |     |          |                                 |
-| PA4  |           |     |          |                                 |
-| PA5  |           |     |          |                                 |
-| PA6  |           |     |          |                                 |
-| PA7  |           |     |          |                                 |
-| PA8  |           |     |          |                                 |
-| PA9  |           |     |          |                                 |
-| PA10 |           |     |          |                                 |
-| PA11 |           |     |          | CANRX / USBDM                   |
-| PA12 |           |     |          | CANTX / USBDP                   |
-| PA13 | SWDIO     |     |          | Nucleo-32 ST-Link               |
-| PA14 | SWCLK     |     |          | Nucleo-32 ST-Link               |
-| PA15 | USART2 RX | in  | AF3      | Nucleo-32 ST-Link VCRX          |
-| PB0  |           |     |          |                                 |
-| PB1  |           |     |          |                                 |
-| PB2  |           |     |          | (not exposed on 32-pin package) |
-| PB3  |           |     |          | Nucleo-32 User LED              |
-| PB4  |           |     |          |                                 |
-| PB5  |           |     |          |                                 |
-| PB6  |           |     |          |                                 |
-| PB7  |           |     |          |                                 |
+Template table, see UM1256 and DS11451 Section 4 for details and more possibilities.
+
+| Pin  | Function                           | DIR | CFG | Connected to                    |
+| ---- | ---------------------------------- | --- | --- | ------------------------------- |
+| PA0  | CK_IN / TIM2 CH1                   | in  |     | Nucleo 32 MCO 8MHz              |
+| PA1  | TIM2 CH2                           |     |     |                                 |
+| PA2  | LPUART1 TX / USART2 TX / TIM2 CH3  |     |     | Nucleo 32 ST-Link VCTX          |
+| PA3  | LPUART1 RX / USART2 RX / TIM2 CH4  |     |     |                                 |
+| PA4  | SPI1 NSS / SPI3 NSS                |     |     |                                 |
+| PA5  | SPI1 SCK                           |     |     |                                 |
+| PA6  | SPI1 MISO                          |     |     |                                 |
+| PA7  | SPI1 MOSI                          |     |     |                                 |
+| PA8  | TIM1 CH1 / MCO                     |     |     |                                 |
+| PA9  | TIM1 CH2 / I2C1 SCL / USART1 TX    |     |     |                                 |
+| PA10 | TIM1 CH3 / I2C1 SDA / USART1 RX    |     |     |                                 |
+| PA11 | TIM1 CH4 / CANRX / USBDM           |     |     |                                 |
+| PA12 | CANTX / USBDP                      |     |     |                                 |
+| PA13 | SWDIO                              |     |     | Nucleo-32 ST-Link               |
+| PA14 | SWCLK                              |     |     | Nucleo-32 ST-Link               |
+| PA15 | USART2 RX / SPI1 NSS / SPI3 NSS    | in  |     | Nucleo-32 ST-Link VCRX          |
+| PB0  | SPI1 NSS                           |     |     |                                 |
+| PB1  | LPUART1 RTS_DE / LPTIM2 IN1        |     |     |                                 |
+| PB2  |                                    |     |     | (not exposed on 32-pin package) |
+| PB3  | SPI1 SCK  / SPI3 SCK               | out |     | Nucleo-32 User LED              |
+| PB4  | SPI1 MISO / SPI3 MISO              |     |     |                                 |
+| PB5  | LPTIM1 IN1 / SPI1 MOSI / SPI3 MOSI |     |     |                                 |
+| PB6  | LPTIM1 ETR / USART1 TX             |     |     |                                 |
+| PB7  | LPTIM1 IN2 / USART1 TX             |     |     |                                 |
+
+
 
 # References
 
