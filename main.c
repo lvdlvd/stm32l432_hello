@@ -14,7 +14,7 @@
 /* clang-format off */
 enum {
 	LPUART1_TX_PIN  = PA2,
-    LED_PIN        = PB3,    
+    LED_PIN         = PB3,    
 };
 
 static const struct gpio_config_t {

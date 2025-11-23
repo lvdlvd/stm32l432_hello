@@ -6,8 +6,8 @@
 // A simple character fifo
 struct Ringbuffer {
   uint8_t buf[1 << 9]; // size must be power of two for efficiency in taking modulo index
-  uint16_t head;       // next write happens here
-  uint16_t tail;       // next read happens here
+  volatile uint16_t head;       // next write happens here
+  volatile uint16_t tail;       // next read happens here
 };
 
 // invariant:
