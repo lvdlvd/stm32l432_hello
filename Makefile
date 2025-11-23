@@ -58,7 +58,7 @@ flash2: main.bin
 	st-flash --connect-under-reset --format binary write $< 0x08000000
 
 clean:
-	rm -f *~ *.o *.hex *.bin *.elf *.map
+	rm -f *~ *.bak *.o *.hex *.bin *.elf *.map
 
 depend:
 	makedepend -Y. -w150 *.c
