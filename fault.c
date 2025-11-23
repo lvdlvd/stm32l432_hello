@@ -5,7 +5,7 @@
 #include "stm32l4xx.h"
 
 static void putc_(char c) {
-  while ((USART2.ISR & UART_ISR_TXE) == 0) {
+  while ((USART2.ISR & USART_ISR_TXE) == 0) {
     __NOP();
   }
   USART2.TDR = c;
