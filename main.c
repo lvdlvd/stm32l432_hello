@@ -145,14 +145,15 @@ void main(void) {
     TIM6.CR1 |= TIM6_CR1_CEN;
     NVIC_EnableIRQ(TIM6_DACUNDER_IRQn);
 
-    // pulling in libm for sinf adds 5kb code
+    //pulling in libm for sinf adds 5kb code
     // for (int i = 0; i < 90; ++i) {
     //     float alpha = i * M_PI/180.0;
     //     float sinalpha = sinf(alpha);
-    //     printf("sin %f = %f\n", (double)alpha, (double)sinalpha);
+    //     printf("sin %d %f = %f\n", i, (double)alpha, (double)sinalpha);
+    //     uart_wait(&USART2);
     // }
 
-    
+
     // Initialize the independent watchdog
     // IWDG.KR = 0x5555;  // enable watchdog config
     // IWDG.PR = 0;       // prescaler /4 -> 10khz
